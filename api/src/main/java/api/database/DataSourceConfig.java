@@ -19,11 +19,7 @@ import java.util.Map;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-        basePackages = "api.database.repository",
-        entityManagerFactoryRef = "resourcesEntityManagerFactory",
-        transactionManagerRef = "resourcesTransactionManager"
-)
+
 
 public class DataSourceConfig {
 
@@ -38,24 +34,6 @@ public class DataSourceConfig {
                 .build();
     }
 
-    @Bean(name = "resourcesEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean resourcesEntityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("resourcesDataSource") DataSource dataSource) {
-        return builder
-                .dataSource(dataSource)
-                .packages("api.database.model")
-                .persistenceUnit("resources")
-                .properties(Map.of(
-                        "hibernate.hbm2ddl.auto", "update",
-                        "hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect"
-                ))
-                .build();
-    }
 
 
-    @Bean(name = "resourcesTransactionManager")
-    public PlatformTransactionManager resourcesTransactionManager(
-            @Qualifier("resourcesEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
-        return new JpaTransactionManager(entityManagerFactory);
-    }
 }

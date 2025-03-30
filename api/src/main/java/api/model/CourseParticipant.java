@@ -1,4 +1,4 @@
-package api.database.model;
+package api.model;
 
 import jakarta.persistence.*;
 
