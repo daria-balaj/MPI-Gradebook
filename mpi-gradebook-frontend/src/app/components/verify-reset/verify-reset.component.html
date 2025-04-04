@@ -1,0 +1,38 @@
+<div class="verify-wrapper">
+  <div class="verify-container">
+    <div class="verify-card">
+      <div class="verify-header">
+        <span class="line"></span>
+        <h2>Verify Your Code</h2>
+        <p *ngIf="email">Verification code sent to: <strong>{{ email }}</strong></p>
+      </div>
+      
+      <form (ngSubmit)="verifyResetCode()" class="verify-form">
+        <div class="form-group">
+          <input 
+            type="text" 
+            id="code" 
+            [(ngModel)]="code" 
+            name="code" 
+            required 
+            placeholder="Enter Verification Code"
+            class="form-style"
+          >
+          
+        </div>
+        
+        <button type="submit" class="btn">
+          Verify Code
+        </button>
+      </form>
+      
+      <div *ngIf="message" class="message" [class.error]="message.includes('error')">
+        {{ message }}
+      </div>
+      
+      <div class="resend-code">
+        Didn't receive a code? <a href="javascript:void(0)" (click)="resendCode()">Resend Code</a>
+      </div>
+    </div>
+  </div>
+</div>

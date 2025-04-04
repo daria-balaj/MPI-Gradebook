@@ -1,0 +1,35 @@
+<div class="reset-wrapper">
+  <div class="reset-container">
+    <div class="reset-card">
+      <div class="reset-header">
+        <span class="line"></span>
+        <h2>Password Reset</h2>
+        <p>Enter your email to receive a reset code</p>
+      </div>
+      
+      <form (ngSubmit)="requestResetCode()" class="reset-form">
+        <div class="form-group">
+          <input 
+            type="email" 
+            [(ngModel)]="email" 
+            name="email" 
+            required 
+            placeholder="Your Email"
+            class="form-style"
+          >
+          
+        </div>
+        
+        <button type="submit" class="btn">
+          Send Reset Code
+        </button>
+      </form>
+      
+      <div *ngIf="message" class="message" [class.error]="message.includes('error')">
+        {{ message }}
+      </div>
+      
+      <button class="btn-link" (click)="goToLogin()">Back to Login</button>
+    </div>
+  </div>
+</div>

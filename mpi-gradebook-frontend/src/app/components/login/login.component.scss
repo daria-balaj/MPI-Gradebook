@@ -507,3 +507,20 @@ input[type="checkbox"] {
   color: green;
   font-size: 12px;
 }
+
+.forgot-password {
+  text-align: center;
+  margin: 10px 0 20px;
+}
+
+.forgot-password a {
+  color: #666;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.forgot-password a:hover {
+  color: #4e73df;
+  text-decoration: underline;
+}
