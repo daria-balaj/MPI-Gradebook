@@ -21,6 +21,10 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { HomeComponent } from './components/home/home.component';
+import { RequestResetComponent } from './components/request-reset/request-reset.component';
+import { VerifyResetComponent } from './components/verify-reset/verify-reset.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -42,6 +46,9 @@ import { HomeComponent } from './components/home/home.component';
     FormsModule,
     MatButtonModule,
     MatFormFieldModule,
+    RequestResetComponent,
+    VerifyResetComponent,
+    ResetPasswordComponent
   ],
   providers: [
     provideAnimationsAsync(),
