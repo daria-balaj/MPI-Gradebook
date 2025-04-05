@@ -1,6 +1,9 @@
 package api.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,15 +40,28 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    private String fullName;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
     // Relationships
     @OneToMany(mappedBy = "teacher")
-    @JsonManagedReference
+//    @JsonManagedReference(value = "teacher-courses")
+//    @JsonIgnore
+    @JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
     private Set<Course> createdCourses;
 
     @OneToMany(mappedBy = "student")
-    private Set<CourseParticipant> courseEnrollments;
+//    @JsonManagedReference(value = "student-courses")
+    @JsonIgnore
+    private Set<CourseParticipant> courses;
+
+    public String getFullName() {
+        return lastName + " " + firstName;
+    }
+
 }

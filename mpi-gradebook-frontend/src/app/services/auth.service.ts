@@ -17,6 +17,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
 
   signup(userData: Partial<User>): Observable<any> {
+    console.log(userData);
     return this.http.post(`${this.baseUrl}/api/users`, userData);
   }
 
@@ -77,6 +78,15 @@ export class AuthService {
       `${this.baseUrl}/api/users/username/${username}`
     );
   }
+
+  isTeacher(): boolean {
+    return this.currentUserSubject.value?.role === 'TEACHER';
+  }
+  
+  isStudent(): boolean {
+    return this.currentUserSubject.value?.role === 'STUDENT';
+  }
+
   checkUsername(username: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.baseUrl}/api/users/check-username`, {
       params: { username },

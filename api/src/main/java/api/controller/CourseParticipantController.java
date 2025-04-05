@@ -40,11 +40,11 @@ public class CourseParticipantController {
     }
 
     
-    @DeleteMapping("/remove")
+    @DeleteMapping("/remove/{studentId}/{courseId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeStudentFromCourse(
-            @RequestParam Long studentId,
-            @RequestParam Long courseId) {
+            @PathVariable Long studentId,
+            @PathVariable Long courseId) {
         try {
             courseParticipantService.removeStudentFromCourse(studentId, courseId);
         } catch (IllegalStateException e) {

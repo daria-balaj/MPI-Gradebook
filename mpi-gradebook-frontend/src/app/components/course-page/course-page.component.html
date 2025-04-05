@@ -1,0 +1,66 @@
+<div class="course-container">
+  <div class="course-header" *ngIf="course">
+    <h1>{{course.courseName}}</h1>
+    <p class="course-description">{{course.description}}</p>
+  </div>
+
+  <div class="student-management-section" *ngIf="!loading">
+    <div class="search-section">
+      <h2>Add Students</h2>
+      <div class="search-container">
+        <form >
+            <mat-form-field>
+                <mat-label>Search Students</mat-label>
+                <input 
+                  matInput
+                  type="text" 
+                  [formControl]="this.searchControl"
+                  [matAutocomplete]="auto"
+
+                >
+                <mat-autocomplete #auto="matAutocomplete">
+                    @for (student of this.results | async; track student) {
+                      <mat-option (click)="addStudent(student)">{{student.lastName}} {{student.firstName}}</mat-option>
+                    }
+                  </mat-autocomplete>
+            </mat-form-field>
+        </form>
+        
+      </div>
+    </div>
+
+    <div class="enrolled-students-section">
+      <h2>Enrolled Students</h2>
+      <div class="students-grid" *ngIf="course?.students?.length; else noStudents">
+        <div class="student-card" *ngFor="let student of course?.students">
+          <div class="student-info">
+            <div class="student-header">
+              <span class="student-name">{{student.lastName}} {{student.firstName}}</span>
+              <button mat-icon-button [matMenuTriggerFor]="menu" class="course-menu-button" (click)="$event.stopPropagation()">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="confirmRemoveStudent(student); $event.stopPropagation()">
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+          <button class="remove-button" (click)="removeStudent(student.id)">
+            
+          </button>
+        </div>
+      </div>
+      
+      <ng-template #noStudents>
+        <p class="no-students-message">No students enrolled in this course yet.</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading course details...</p>
+  </div>
+</div>

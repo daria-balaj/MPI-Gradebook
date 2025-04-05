@@ -2,6 +2,9 @@ package api.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,17 +31,24 @@ public class Course {
     @Setter
     @Getter
     @JoinColumn(name = "teacher_id", nullable = false)
-    @JsonBackReference
+//    @JsonBackReference
+//    @JsonIgnore
+    @JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
     private User teacher;
 
     @OneToMany(mappedBy = "course")
-    private Set<CourseParticipant> enrollments;
+//    @JsonBackReference
+    @JsonIgnore
+    private Set<CourseParticipant> students;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "course")
     private Set<Assignment> assignments;
 
     public long getId() { return this.id;}
-
+    public void setId(long id ) { this.id = id; }
 
 }
 
