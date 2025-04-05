@@ -22,6 +22,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/{prefix}")
+    public ResponseEntity<List<User>> searchUsers(@PathVariable String prefix) {
+        List<User> results = userService.searchUsers(prefix);
+        return ResponseEntity.ok(results);
+    }
+
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());

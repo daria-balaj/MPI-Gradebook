@@ -155,7 +155,7 @@ export class LoginComponent implements OnInit {
           duration: 3000,
           panelClass: ['snackbar-success'],
         });
-        this.router.navigate(['/home']);
+        this.router.navigate(['/teacher/dashboard']);
       },
       error: (error) => {
         console.error('Login failed', error);

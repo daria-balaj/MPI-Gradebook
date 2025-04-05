@@ -1,0 +1,53 @@
+<!-- add-course-dialog.component.html -->
+<h2 mat-dialog-title>Create New Course</h2>
+
+<form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Course Name</mat-label>
+      <input matInput formControlName="courseName" placeholder="Enter course name" required>
+      <mat-error *ngIf="courseForm.get('courseName')?.hasError('required')">
+        Course name is required
+      </mat-error>
+      <mat-error *ngIf="courseForm.get('courseName')?.hasError('maxlength')">
+        Course name cannot exceed 100 characters
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea 
+        matInput 
+        formControlName="description" 
+        placeholder="Enter course description"
+        rows="4">
+      </textarea>
+      <mat-error *ngIf="courseForm.get('description')?.hasError('maxlength')">
+        Description cannot exceed 500 characters
+      </mat-error>
+    </mat-form-field>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button 
+      mat-button 
+      type="button" 
+      [disabled]="creating" 
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button 
+      mat-raised-button 
+      color="accent" 
+      type="submit" 
+      [disabled]="courseForm.invalid || creating">
+      <mat-spinner diameter="20" *ngIf="creating"></mat-spinner>
+      <span *ngIf="!creating">{{submitButtonText}}</span>
+    </button>
+  </div>
+</form>

@@ -23,6 +23,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> searchUsers(String prefix) {
+        return userRepository.findByFullNameStartingWithIgnoreCase(prefix);
+    }
+
     public User createUser(User user) {
 
         boolean userExists = userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
