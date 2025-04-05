@@ -29,6 +29,10 @@ import { TeacherDashboardComponent } from './components/teacher/teacher-dashboar
 import { StudentDashboardComponent } from './components/student/student-dashboard/student-dashboard.component';
 import { CourseFormComponent } from './components/course-form/course-form.component';
 import { CoursePageComponent } from './components/course-page/course-page.component';
+import { RequestResetComponent } from './components/request-reset/request-reset.component';
+import { VerifyResetComponent } from './components/verify-reset/verify-reset.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -58,6 +62,9 @@ import { CoursePageComponent } from './components/course-page/course-page.compon
     MatProgressSpinnerModule,
     MatMenuModule,
     MatAutocompleteModule,
+    RequestResetComponent,
+    VerifyResetComponent,
+    ResetPasswordComponent
   ],
   providers: [
     provideAnimationsAsync(),
