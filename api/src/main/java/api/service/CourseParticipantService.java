@@ -70,6 +70,11 @@ public class CourseParticipantService {
         courseParticipantRepository.deleteById(id);
     }
 
+    @Transactional
+    public void removeAllStudentsFromCourse(Long courseId) {
+        courseParticipantRepository.deleteByCourseId(courseId);
+    }
+
 
     public List<User> getStudentsInCourse(Long courseId) {
         return courseParticipantRepository.findByCourseId(courseId)

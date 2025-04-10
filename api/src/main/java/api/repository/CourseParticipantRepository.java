@@ -18,4 +18,6 @@ public interface CourseParticipantRepository extends JpaRepository<CoursePartici
     long countByCourseId(Long courseId);
 
     long countByStudentId(Long studentId);
+
+    void deleteByCourseId(Long courseId);
 }

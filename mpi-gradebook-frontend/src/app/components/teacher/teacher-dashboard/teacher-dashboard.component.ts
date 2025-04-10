@@ -27,12 +27,14 @@ export class TeacherDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTeacherCourses();
+    
   }
 
   loadTeacherCourses(): void {
     this.courseService.getCoursesForTeacher(1).subscribe({
       next: (courses) => {
         this.courses = courses;
+        console.log(this.courses[1].students);
         this.loading = false;
       },
       error: (error) => {

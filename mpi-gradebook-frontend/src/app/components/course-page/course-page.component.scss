@@ -25,7 +25,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 .student-management-section {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 300px 1fr; // Changed to fixed width for search and more space for students
   gap: 2rem;
 }
 
@@ -93,69 +93,63 @@ h1, h2, h3, h4, h5, h6, p {
   }
 
   .students-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
-  }
+    width: 100%;
 
-  .student-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid rgba(157, 78, 221, 0.2);
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .student-info {
-      display: flex;
-      flex-direction: column;
+    mat-accordion {
+      display: block;
       width: 100%;
 
-      .student-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      .student-card {
+        margin-bottom: 1rem;
         width: 100%;
 
-        .student-name {
-          font-weight: 500;
-        }
-
-        .course-menu-button {
-          color: #eed7ff;
-          opacity: 0.8;
+        mat-expansion-panel {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 12px;
+          border: 1px solid rgba(157, 78, 221, 0.2);
+          transition: box-shadow 0.2s;
+          margin-bottom: 15px !important;
 
           &:hover {
-            opacity: 1;
+            box-shadow: 0 6px 20px rgba(157, 78, 221, 0.2);
+          }
+
+          .mat-expansion-panel-header {
+            padding: 1.2rem;
+            height: auto;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.02);
+            }
+          }
+
+          .student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+
+            .student-name {
+              font-size: 1.2rem;
+              font-weight: 500;
+              color: #eed7ff;
+            }
+
+            .course-menu-button {
+              color: #eb66ff;
+              opacity: 0.8;
+
+              &:hover {
+                opacity: 1;
+              }
+            }
+          }
+
+          .mat-expansion-panel-body {
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.02);
           }
         }
-      }
-    }
-
-    .student-name {
-      font-weight: 500;
-    }
-
-    .student-email {
-      font-size: 0.9rem;
-    }
-
-    .remove-button {
-      background: none;
-      border: none;
-      color: #ff6b6b;
-      cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 50%;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background: rgba(255, 107, 107, 0.1);
       }
     }
   }
@@ -194,4 +188,116 @@ h1, h2, h3, h4, h5, h6, p {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   border: 1px dashed rgba(157, 78, 221, 0.2);
+}
+
+.grading-section {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 400px;
+  z-index: 1000;
+
+  mat-card {
+    background: #351232;
+    color: #eed7ff;
+    padding: 1rem;
+    border: 1px solid rgba(207, 78, 221, 0.3);
+  }
+
+  mat-card-title {
+    color: #eed7ff;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  mat-form-field {
+    width: 100%;
+    margin: 1rem 0;
+  }
+
+  mat-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 0.5rem;
+
+    button {
+      &[color="primary"] {
+        background: linear-gradient(45deg, #9d4edd, #cf4edd);
+      }
+    }
+  }
+}
+
+.grades-list {
+  padding: 1rem 0;
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .grades-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+
+  .grade-item {
+    background: rgba(235, 102, 255, 0.1);
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid rgba(235, 102, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(235, 102, 255, 0.2);
+      background: rgba(235, 102, 255, 0.15);
+      border-color: rgba(235, 102, 255, 0.4);
+    }
+
+    .grade-value {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #eed7ff;
+      display: block;
+    }
+
+    .grade-date {
+      font-size: 0.8rem;
+      color: #e0aaff;
+      opacity: 0.8;
+      margin-top: 0.4rem;
+      display: block;
+    }
+  }
+}
+
+.add-grade-form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(235, 102, 255, 0.2);
+
+  mat-form-field {
+    flex: 1;
+  }
+
+  button[mat-raised-button] {
+    background-color: #eb66ff;
+    color: white;
+
+    &:hover {
+      background-color: #cf4edd;
+    }
+
+    &:disabled {
+      background-color: rgba(235, 102, 255, 0.3);
+    }
+  }
 }

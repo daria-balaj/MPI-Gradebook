@@ -93,7 +93,9 @@ export class LoginComponent implements OnInit {
           panelClass: ['snackbar-success'],
         });
         this.signupForm.reset();
-        this.router.navigate(['/home']);
+        this.authService.getCurrentUser().subscribe(
+          () => this.redirectAfterAuthentication()
+        );
       },
       error: (error) => {
         console.error('Signup failed', error);
@@ -109,6 +111,15 @@ export class LoginComponent implements OnInit {
         });
       },
     });
+  }
+
+  redirectAfterAuthentication(): void {
+    if (this.authService.isTeacher()) {
+      this.router.navigate(['/teacher/dashboard']);
+    }
+    else if (this.authService.isStudent()) {
+      this.router.navigate(['/student/dashboard']);
+    }
   }
 
   get usernameControl() {
@@ -155,7 +166,9 @@ export class LoginComponent implements OnInit {
           duration: 3000,
           panelClass: ['snackbar-success'],
         });
-        this.router.navigate(['/teacher/dashboard']);
+        this.authService.getCurrentUser().subscribe(
+          () => this.redirectAfterAuthentication()
+        )
       },
       error: (error) => {
         console.error('Login failed', error);

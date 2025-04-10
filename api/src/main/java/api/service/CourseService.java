@@ -13,10 +13,12 @@ import java.util.Optional;
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final CourseParticipantService courseParticipantService;
 
     @Autowired
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, CourseParticipantService courseParticipantService) {
         this.courseRepository = courseRepository;
+        this.courseParticipantService = courseParticipantService;
     }
 
 
@@ -51,6 +53,7 @@ public class CourseService {
 
     @Transactional
     public void deleteCourse(Long id) {
+        courseParticipantService.removeAllStudentsFromCourse(id);
         courseRepository.deleteById(id);
     }
 
