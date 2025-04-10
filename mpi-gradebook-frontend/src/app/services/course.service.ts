@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Course } from '../models/course';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { User } from '../models/user';
+import { map, Observable } from 'rxjs';
+import { Grade } from '../models/grade';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +17,24 @@ export class CourseService {
     return this.httpClient.get<Course>(`${this.apiUrl}/courses/${id}`)
   }
 
-  getCoursesForTeacher(teacherId: number) {
-    return this.httpClient.get<Course[]>(`${this.apiUrl}/courses/teacher/${teacherId}`)
+  getCoursesForTeacher(teacherId: number) : Observable<Course[]> {
+    return this.httpClient.get<Course[]>(`${this.apiUrl}/courses/teacher/${teacherId}`).pipe(
+      map((courses: Course[]) => {
+        return courses.map((course: Course) => {
+          return {
+            id: course.id,
+            courseName: course.courseName,
+            description: course.description,
+            students: course.students || [],
+            assignments: course.assignments || []
+          };
+        });
+      }
+    ));
+  }
+
+  getCoursesForStudent(studentId: number) {
+    return this.httpClient.get<Course[]>(`${this.apiUrl}/courses/student/${studentId}`)
   }
 
   getStudentsInCourse(courseId: number) { 
@@ -47,4 +65,31 @@ export class CourseService {
   deleteCourse(courseId: number) {
     return this.httpClient.delete(`${this.apiUrl}/courses/${courseId}`);
   }
+
+  addGrade(courseId: number, studentId: number, grade: number) {
+    return this.httpClient.post(`${this.apiUrl}/grades`, {
+      value: grade,
+      student: {
+        id: studentId
+      },
+      course: {
+        id: courseId
+      }
+    })
+  }
+
+  updateGrade(gradeId: number, grade: number) {
+    const params = new HttpParams().set('newValue', grade);
+    return this.httpClient.put(`${this.apiUrl}/grades/${gradeId}`, params);
+  }
+
+  deleteGrade(gradeId: number) {
+    return this.httpClient.delete(`${this.apiUrl}/grades/${gradeId}`); 
+  }
+
+  getGradesForStudent(studentId: number): Observable<Grade[]> {
+    return this.httpClient.get<Grade[]>(`${this.apiUrl}/grades/student/${studentId}`)
+  }
+
+
 }

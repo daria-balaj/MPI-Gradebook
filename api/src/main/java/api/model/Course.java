@@ -44,7 +44,7 @@ public class Course {
     private Set<CourseParticipant> students;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Assignment> assignments;
 
     public long getId() { return this.id;}

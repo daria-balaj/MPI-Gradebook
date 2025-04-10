@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { Observable, debounceTime, distinctUntilChanged, switchMap, map, startWith } from 'rxjs';
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
@@ -9,6 +9,8 @@ import { Course } from '../../models/course';
 import { User } from '../../models/user';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatExpansionPanel } from '@angular/material/expansion';
+import { Grade } from '../../models/grade';
 
 @Component({
   selector: 'app-course-page',
@@ -17,12 +19,23 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   styleUrl: './course-page.component.scss'
 })
 export class CoursePageComponent implements OnInit {
+  @ViewChildren(MatExpansionPanel) expansionPanels!: QueryList<MatExpansionPanel>;
+
   course: Course | null = null;
   loading = true;
   searchControl = new FormControl('');
   students: User[] = [];
   results: Observable<User[]> = new Observable<User[]>();
-  
+  selectedStudent: User | null = null;
+  selectedGradeId: number | null = null;
+  gradeControl = new FormControl('', [
+    Validators.required,
+    Validators.min(1),
+    Validators.max(10)
+  ]);
+  studentGrades: Map<number, Grade[]> = new Map();
+  step?: number; 
+
   constructor(
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -47,6 +60,17 @@ export class CoursePageComponent implements OnInit {
     return this.userService.students.value.filter(student => student.lastName.toLowerCase().includes(value.toLowerCase()))
   }
 
+  setAccordionStep(step: number): void {
+    this.selectedStudent = this.students[step];
+    this.expansionPanels.forEach((panel, index) => {
+      if (index === step) {
+        panel.open();
+      } else {
+        panel.close();
+      }
+    });
+  }
+
   loadCourse(courseId: number): void {
     this.courseService.getCourse(courseId).subscribe({
       next: (course) => {
@@ -54,8 +78,14 @@ export class CoursePageComponent implements OnInit {
         this.loading = false;
 
         this.courseService.getStudentsInCourse(courseId).subscribe(
-          students => {
+          (students: User[]) => {
             this.course!.students = students;
+            students.forEach(student => {
+              this.courseService.getGradesForStudent(student.id).subscribe(grades => {
+                this.studentGrades.set(student.id, grades);
+              });
+            }
+          )
           }
         );
       },
@@ -113,6 +143,78 @@ export class CoursePageComponent implements OnInit {
       error: (error) => {
         console.error('Error removing student:', error);
         this.showError('Failed to remove student');
+      }
+    });
+  }
+
+  // selectStudent(student: User): void {
+  //   this.selectedStudent = student;
+
+  //   // Close other panels
+  //   this.expansionPanels.forEach(panel => panel.close());
+    
+  //   // Load grades if not already loaded
+  //   if (!this.studentGrades.has(student.id)) {
+  //     this.courseService.getGradesForStudent(student.id).subscribe(grades => {
+  //       this.studentGrades.set(student.id, grades);
+  //     });
+  //   }
+  // }
+
+  submitGrade(id: number): void {
+    if (!this.course || !this.gradeControl.valid) return;
+    const grade = this.gradeControl.value;
+    this.courseService.addGrade(this.course.id, id, Number(grade)).subscribe({
+      next: () => {
+        this.courseService.getGradesForStudent(id).subscribe(grades => {
+          this.studentGrades.set(id, grades);
+        }
+        );
+        this.showSuccess(`Grade ${grade} added for ${this.selectedStudent?.lastName}`);
+        this.gradeControl.reset();
+        // this.selectedStudent = null;
+        console.log(this.studentGrades.get(id))
+      },
+      error: (error) => {
+        console.error('Error adding grade:', error);
+        this.showError('Failed to add grade');
+      }
+    });
+  }
+
+  confirmDeleteGrade(): void {
+    if (!this.selectedGradeId) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Delete Grade',
+        message: `Are you sure you want to delete this grade?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteGrade();
+      }
+    });
+  }
+
+  selectGrade(id: number) {
+    this.selectedGradeId = id;
+  }
+
+  private deleteGrade(): void {
+    if (!this.selectedGradeId) return;
+
+    this.courseService.deleteGrade(this.selectedGradeId).subscribe({
+      next: () => {
+        this.loadCourse(this.course!.id);
+        this.showSuccess('Grade deleted successfully');
+      },
+      error: (error) => {
+        console.error('Error deleting grade:', error);
+        this.showError('Failed to delete grade');
       }
     });
   }

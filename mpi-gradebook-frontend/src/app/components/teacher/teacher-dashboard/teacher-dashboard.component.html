@@ -16,7 +16,7 @@
       <button mat-raised-button color="primary" (click)="loadTeacherCourses()">Retry</button>
     </div>
 
-    <div *ngIf="!loading && !error && courses?.length === 0" class="empty-state">
+    <div *ngIf="!loading && !error && !this.courses" class="empty-state">
       <mat-icon>school</mat-icon>
       <h2>No Courses Yet</h2>
       <p>Get started by creating your first course.</p>
@@ -25,7 +25,7 @@
       </button>
     </div>
 
-    <div *ngIf="!loading && !error && courses.length > 0" class="courses-grid">
+    <div *ngIf="!loading && !error && this.courses" class="courses-grid">
       <mat-card *ngFor="let course of courses" class="course-card"
       (click)="navigateToCourse(course.id)">
         <mat-card-header>

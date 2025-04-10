@@ -14,7 +14,7 @@ export class AuthService {
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
 
-  private currentUserSubject = new BehaviorSubject<any>(null);
+  public currentUserSubject = new BehaviorSubject<any>(null);
 
   signup(userData: Partial<User>): Observable<any> {
     console.log(userData);
@@ -33,6 +33,7 @@ export class AuthService {
         tap((token: string) => {
           localStorage.setItem('token', token);
           localStorage.setItem('username', username);
+          // this.getCurrentUser().subscribe();
         })
       );
   }
@@ -48,6 +49,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    this.currentUserSubject.next(null);
     this.isLoggedInSubject.next(false);
   }
 
@@ -63,10 +65,17 @@ export class AuthService {
     this.isLoggedInSubject.next(loggedIn);
   }
 
-  getUserDetails(userId: string): Observable<User> {
-    const userDetailsEndpoint = `${this.baseUrl}/api/users/${userId}`;
-    return this.http.get<User>(userDetailsEndpoint);
-  }
+  // getUserDetails(userId: string) {
+  //   const userDetailsEndpoint = `${this.baseUrl}/api/users/${userId}`;
+  //   this.http.get<User>(userDetailsEndpoint).subscribe({
+  //     next: (user) => {
+  //       this.currentUserSubject.next(user);
+  //     },
+  //     error: (error) => {
+  //       console.error('Error fetching user details:', error);
+  //     },
+  //   });
+  // }
 
   getCurrentUser(): Observable<User> {
     const username = this.getUsername();
@@ -76,7 +85,9 @@ export class AuthService {
     }
     return this.http.get<User>(
       `${this.baseUrl}/api/users/username/${username}`
-    );
+    ).pipe(
+      tap((user) => this.currentUserSubject.next(user)
+    ));
   }
 
   isTeacher(): boolean {

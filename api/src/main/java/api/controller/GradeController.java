@@ -42,14 +42,19 @@ public class GradeController {
         return ResponseEntity.ok(gradeService.getGradesByStudentId(studentId));
     }
 
+    @GetMapping("/detail/{studentId}")
+    public ResponseEntity<List<Grade>> getGradesByStudentWithCourseName(@PathVariable Long studentId) {
+        return ResponseEntity.ok(gradeService.getDetailedGradesByStudentId(studentId));
+    }
+
     @GetMapping("/course/{courseId}")
     public ResponseEntity<List<Grade>> getGradesByCourse(@PathVariable Long courseId) {
         return ResponseEntity.ok(gradeService.getGradesByCourseId(courseId));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Grade> updateGrade(@PathVariable Long id, @RequestBody Grade updatedGrade) {
-        Grade updated = gradeService.updateGrade(id, updatedGrade);
+    public ResponseEntity<Grade> updateGrade(@PathVariable Long id, @RequestParam double newValue) {
+        Grade updated = gradeService.updateGrade(id, newValue);
         return ResponseEntity.ok(updated);
     }
 

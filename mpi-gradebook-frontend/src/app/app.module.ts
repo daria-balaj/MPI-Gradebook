@@ -4,7 +4,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,6 +34,8 @@ import { RequestResetComponent } from './components/request-reset/request-reset.
 import { VerifyResetComponent } from './components/verify-reset/verify-reset.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { RouterModule } from '@angular/router';
+import { MatTableModule } from '@angular/material/table';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -64,7 +67,10 @@ import { RouterModule } from '@angular/router';
     MatAutocompleteModule,
     RequestResetComponent,
     VerifyResetComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    MatTableModule,
+    MatTabsModule,
+    MatExpansionModule
   ],
   providers: [
     provideAnimationsAsync(),

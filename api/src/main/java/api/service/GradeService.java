@@ -41,14 +41,16 @@ public class GradeService {
         return gradeRepository.findByStudentId(studentId);
     }
 
+    public List<Grade> getDetailedGradesByStudentId(Long studentId) { return gradeRepository.findByStudentIdWithCourseNames(studentId); }
+
     public List<Grade> getGradesByCourseId(Long courseId) {
         return gradeRepository.findByCourseId(courseId);
     }
 
-    public Grade updateGrade(Long id, Grade updatedGrade) {
+    public Grade updateGrade(Long id, Double newValue) {
         Grade existingGrade = getGradeById(id);
-        existingGrade.setValue(updatedGrade.getValue());
-        existingGrade.setDateGiven(LocalDate.now()); //
+        existingGrade.setValue(newValue);
+        existingGrade.setDateGiven(LocalDate.now());
 
         return gradeRepository.save(existingGrade);
     }
