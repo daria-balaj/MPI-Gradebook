@@ -5,7 +5,12 @@
   color: #ffffff;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: #eed7ff;
 }
 
@@ -23,27 +28,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .create-course-btn {
-  background-color: #eb66ff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #9d4edd, #eb66ff);
   border: none;
-  padding: 0.3rem 1rem;
-  border-radius: 8px;
-  color: white;
-  font-weight: 500;
+  border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(157, 78, 221, 0.4);
+  transition: all 0.3s ease;
 
-  &:hover {
-    box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
+  .icon {
+    font-size: 1.3rem;
+    line-height: 1;
   }
 
-//   mat-icon {
-//     font-size: 35px;
-//     color: #ffffff;
-//     overflow: visible;
-//     align-self: self-start;
-//   }
-}
+  &:hover {
+    background: linear-gradient(135deg, #cf4edd, #9d4edd);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(157, 78, 221, 0.5);
+  }
 
+  &:active {
+    transform: scale(0.97);
+  }
+}
 
 .courses-grid {
   display: grid;
@@ -81,11 +94,11 @@ h1, h2, h3, h4, h5, h6 {
 
   .course-stats {
     span {
-        align-self: start;
+      align-self: start;
     }
     mat-icon {
-        align-self: self-end;
-        margin-right: 0.5em;
+      align-self: self-end;
+      margin-right: 0.5em;
     }
   }
 }
@@ -96,7 +109,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   min-height: 200px;
-  
+
   .spinner {
     width: 30px;
     height: 30px;

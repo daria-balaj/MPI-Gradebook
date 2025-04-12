@@ -1,12 +1,22 @@
 package api.service;
 
 import api.dto.GradeAverageDTO;
+import api.model.Course;
 import api.model.Grade;
+import api.model.User;
+import api.repository.CourseRepository;
 import api.repository.GradeRepository;
+import api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +25,8 @@ import java.util.stream.Collectors;
 public class GradeService {
 
     private final GradeRepository gradeRepository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
     public List<Grade> getAllGrades() {
         return gradeRepository.findAll();
@@ -27,7 +39,7 @@ public class GradeService {
 
     public Grade saveGrade(Grade grade) {
         if (grade.getDateGiven() == null) {
-            grade.setDateGiven(LocalDate.now());
+            grade.setDateGiven(LocalDateTime.now());
         }
         return gradeRepository.save(grade);
     }
@@ -50,7 +62,7 @@ public class GradeService {
     public Grade updateGrade(Long id, Double newValue) {
         Grade existingGrade = getGradeById(id);
         existingGrade.setValue(newValue);
-        existingGrade.setDateGiven(LocalDate.now());
+        existingGrade.setDateGiven(LocalDateTime.now());
 
         return gradeRepository.save(existingGrade);
     }
@@ -74,5 +86,39 @@ public class GradeService {
                 })
                 .toList();
     }
+
+    public void processCsvForCourse(MultipartFile file, Long courseId) throws IOException {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Cursul nu a fost găsit!"));
+
+        List<Grade> grades = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            reader.readLine(); // Skip header
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length < 2) continue;
+
+                String studentName = parts[0].trim();
+                double value = Double.parseDouble(parts[1].trim());
+
+                User student = userRepository.findByFullName(studentName)
+                        .orElseThrow(() -> new RuntimeException("Student inexistent: " + studentName));
+
+                Grade grade = Grade.builder()
+                        .student(student)
+                        .course(course)
+                        .value(value)
+                        .dateGiven(LocalDateTime.now())
+                        .build();
+
+                grades.add(grade);
+            }
+        }
+
+        gradeRepository.saveAll(grades);
+    }
+
 }
 

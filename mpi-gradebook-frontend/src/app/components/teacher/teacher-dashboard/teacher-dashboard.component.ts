@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.comp
   selector: 'app-teacher-dashboard',
   standalone: false,
   templateUrl: './teacher-dashboard.component.html',
-  styleUrl: './teacher-dashboard.component.scss'
+  styleUrl: './teacher-dashboard.component.scss',
 })
 export class TeacherDashboardComponent implements OnInit {
   courses: Course[] = [];
@@ -27,7 +27,6 @@ export class TeacherDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTeacherCourses();
-    
   }
 
   loadTeacherCourses(): void {
@@ -41,7 +40,7 @@ export class TeacherDashboardComponent implements OnInit {
         console.error('Error loading courses:', error);
         this.error = true;
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -52,14 +51,14 @@ export class TeacherDashboardComponent implements OnInit {
   openAddCourseDialog(): void {
     const dialogRef = this.dialog.open(CourseFormComponent, {
       width: '500px',
-      data: { teacherId: this.teacherId }
+      data: { teacherId: this.teacherId },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.loadTeacherCourses();
         this.snackBar.open('Course created successfully!', 'Close', {
-          duration: 3000
+          duration: 3000,
         });
       }
     });
@@ -68,14 +67,18 @@ export class TeacherDashboardComponent implements OnInit {
   openEditCourseDialog(course: Course): void {
     const dialogRef = this.dialog.open(CourseFormComponent, {
       width: '500px',
-      data: { teacherId: this.teacherId, name: course.courseName, description: course.description }
+      data: {
+        teacherId: this.teacherId,
+        name: course.courseName,
+        description: course.description,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.loadTeacherCourses();
         this.snackBar.open('Course updated successfully!', 'Close', {
-          duration: 3000
+          duration: 3000,
         });
       }
     });
@@ -86,11 +89,11 @@ export class TeacherDashboardComponent implements OnInit {
       width: '350px',
       data: {
         title: 'Delete Course',
-        message: `Are you sure you want to delete ${course.courseName}? This action cannot be undone.`
-      }
+        message: `Are you sure you want to delete ${course.courseName}? This action cannot be undone.`,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.deleteCourse(course.id);
       }
@@ -102,17 +105,19 @@ export class TeacherDashboardComponent implements OnInit {
       next: () => {
         this.loadTeacherCourses();
         this.snackBar.open('Course deleted successfully!', 'Close', {
-          duration: 3000
+          duration: 3000,
         });
       },
       error: (err) => {
         console.error('Error deleting course:', err);
-        this.snackBar.open('Failed to delete course. Please try again.', 'Close', {
-          duration: 5000
-        });
-      }
+        this.snackBar.open(
+          'Failed to delete course. Please try again.',
+          'Close',
+          {
+            duration: 5000,
+          }
+        );
+      },
     });
   }
-
-
 }

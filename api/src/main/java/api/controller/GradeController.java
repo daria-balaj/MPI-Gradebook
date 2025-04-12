@@ -6,8 +6,10 @@ import api.service.GradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/grades")
@@ -68,5 +70,21 @@ public class GradeController {
     public ResponseEntity<List<GradeAverageDTO>> getAllAveragesForStudent(@PathVariable Long studentId) {
         return ResponseEntity.ok(gradeService.getAllCourseAveragesForStudent(studentId));
     }
+
+    @PostMapping("/bulk-upload/{courseId}")
+    public ResponseEntity<Map<String, String>> uploadGradesToCourse(
+            @PathVariable Long courseId,
+            @RequestParam("file") MultipartFile file
+    ) {
+        try {
+            gradeService.processCsvForCourse(file, courseId);
+            return ResponseEntity.ok(Map.of("message", "Notele au fost încărcate cu succes!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Eroare la upload: " + e.getMessage()));
+        }
+    }
+
+
 }
 

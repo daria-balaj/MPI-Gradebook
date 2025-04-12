@@ -36,7 +36,7 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+        user.setFullName(user.getFirstName() + " " + user.getLastName());
         return userRepository.save(user);
     }
 

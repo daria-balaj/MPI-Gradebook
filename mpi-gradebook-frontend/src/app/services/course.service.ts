@@ -6,60 +6,77 @@ import { map, Observable } from 'rxjs';
 import { Grade } from '../models/grade';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CourseService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
   apiUrl: string = 'http://localhost:8080/api';
 
   getCourse(id: number) {
-    return this.httpClient.get<Course>(`${this.apiUrl}/courses/${id}`)
+    return this.httpClient.get<Course>(`${this.apiUrl}/courses/${id}`);
   }
 
-  getCoursesForTeacher(teacherId: number) : Observable<Course[]> {
-    return this.httpClient.get<Course[]>(`${this.apiUrl}/courses/teacher/${teacherId}`).pipe(
-      map((courses: Course[]) => {
-        return courses.map((course: Course) => {
-          return {
-            id: course.id,
-            courseName: course.courseName,
-            description: course.description,
-            students: course.students || [],
-            assignments: course.assignments || []
-          };
-        });
-      }
-    ));
+  getCoursesForTeacher(teacherId: number): Observable<Course[]> {
+    return this.httpClient
+      .get<Course[]>(`${this.apiUrl}/courses/teacher/${teacherId}`)
+      .pipe(
+        map((courses: Course[]) => {
+          return courses.map((course: Course) => {
+            return {
+              id: course.id,
+              courseName: course.courseName,
+              description: course.description,
+              students: course.students || [],
+              assignments: course.assignments || [],
+            };
+          });
+        })
+      );
   }
 
   getCoursesForStudent(studentId: number) {
-    return this.httpClient.get<Course[]>(`${this.apiUrl}/courses/student/${studentId}`)
+    return this.httpClient.get<Course[]>(
+      `${this.apiUrl}/courses/student/${studentId}`
+    );
   }
 
-  getStudentsInCourse(courseId: number) { 
-    return this.httpClient.get<User[]>(`${this.apiUrl}/course-participants/course/${courseId}/students`)
+  getStudentsInCourse(courseId: number) {
+    return this.httpClient.get<User[]>(
+      `${this.apiUrl}/course-participants/course/${courseId}/students`
+    );
   }
 
   getStudentCountForCourse(courseId: number) {
-    return this.httpClient.get<number>(`${this.apiUrl}/courses/${courseId}/students/count`)
+    return this.httpClient.get<number>(
+      `${this.apiUrl}/courses/${courseId}/students/count`
+    );
   }
 
   addStudentToCourse(courseId: number, studentId: number) {
-    const params = new HttpParams().set('studentId', studentId).set('courseId', courseId);
-    return this.httpClient.post(`${this.apiUrl}/course-participants/add`,  params );
+    const params = new HttpParams()
+      .set('studentId', studentId)
+      .set('courseId', courseId);
+    return this.httpClient.post(
+      `${this.apiUrl}/course-participants/add`,
+      params
+    );
   }
 
   removeStudentFromCourse(courseId: number, studentId: number) {
-    return this.httpClient.delete(`${this.apiUrl}/course-participants/remove/${studentId}/${courseId}`);
+    return this.httpClient.delete(
+      `${this.apiUrl}/course-participants/remove/${studentId}/${courseId}`
+    );
   }
 
   createCourse(course: Course) {
-    return this.httpClient.post<Course>(`${this.apiUrl}/courses`, course)
+    return this.httpClient.post<Course>(`${this.apiUrl}/courses`, course);
   }
 
   updateCourse(course: Course) {
-    return this.httpClient.put<Course>(`${this.apiUrl}/courses/${course.id}`, course)
+    return this.httpClient.put<Course>(
+      `${this.apiUrl}/courses/${course.id}`,
+      course
+    );
   }
 
   deleteCourse(courseId: number) {
@@ -70,12 +87,12 @@ export class CourseService {
     return this.httpClient.post(`${this.apiUrl}/grades`, {
       value: grade,
       student: {
-        id: studentId
+        id: studentId,
       },
       course: {
-        id: courseId
-      }
-    })
+        id: courseId,
+      },
+    });
   }
 
   updateGrade(gradeId: number, grade: number) {
@@ -84,12 +101,19 @@ export class CourseService {
   }
 
   deleteGrade(gradeId: number) {
-    return this.httpClient.delete(`${this.apiUrl}/grades/${gradeId}`); 
+    return this.httpClient.delete(`${this.apiUrl}/grades/${gradeId}`);
   }
 
   getGradesForStudent(studentId: number): Observable<Grade[]> {
-    return this.httpClient.get<Grade[]>(`${this.apiUrl}/grades/student/${studentId}`)
+    return this.httpClient.get<Grade[]>(
+      `${this.apiUrl}/grades/student/${studentId}`
+    );
   }
 
-
+  uploadGradesCsv(courseId: number, formData: FormData) {
+    return this.httpClient.post(
+      `${this.apiUrl}/grades/bulk-upload/${courseId}`,
+      formData
+    );
+  }
 }

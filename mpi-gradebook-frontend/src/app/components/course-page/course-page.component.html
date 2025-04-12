@@ -1,48 +1,78 @@
 <div class="course-container">
+  <div class="back-button-container">
+    <button
+      mat-button
+      class="back-button"
+      [routerLink]="['/teacher/dashboard']"
+    >
+      ⬅ Back to Dashboard
+    </button>
+  </div>
+
   <div class="course-header" *ngIf="course">
-    <h1>{{course.courseName}}</h1>
-    <p class="course-description">{{course.description}}</p>
+    <h1>{{ course.courseName }}</h1>
+    <p class="course-description">{{ course.description }}</p>
   </div>
 
   <div class="student-management-section" *ngIf="!loading">
     <div class="search-section">
       <h2>Add Students</h2>
       <div class="search-container">
-        <form >
-            <mat-form-field>
-                <mat-label>Search Students</mat-label>
-                <input 
-                  matInput
-                  type="text" 
-                  [formControl]="this.searchControl"
-                  [matAutocomplete]="auto"
-
-                >
-                <mat-autocomplete #auto="matAutocomplete">
-                    @for (student of this.results | async; track student) {
-                      <mat-option (click)="addStudent(student)">{{student.lastName}} {{student.firstName}}</mat-option>
-                    }
-                  </mat-autocomplete>
-            </mat-form-field>
+        <form>
+          <mat-form-field>
+            <mat-label>Search Students</mat-label>
+            <input
+              matInput
+              type="text"
+              [formControl]="this.searchControl"
+              [matAutocomplete]="auto"
+            />
+            <mat-autocomplete #auto="matAutocomplete">
+              @for (student of this.results | async; track student) {
+              <mat-option (click)="addStudent(student)"
+                >{{ student.lastName }} {{ student.firstName }}</mat-option
+              >
+              }
+            </mat-autocomplete>
+          </mat-form-field>
         </form>
-        
       </div>
     </div>
 
     <div class="enrolled-students-section">
       <h2>Enrolled Students</h2>
-      <div class="students-grid" *ngIf="course?.students?.length; else noStudents">
+      <div class="csv-upload">
+        <label for="fileUpload" class="csv-label"> 📤 Upload Grades CSV </label>
+        <input
+          type="file"
+          id="fileUpload"
+          accept=".csv"
+          hidden
+          [disabled]="loading || !course"
+          (change)="onFileSelected($event)"
+        />
+      </div>
+      <div
+        class="students-grid"
+        *ngIf="course?.students?.length; else noStudents"
+      >
         <mat-accordion multi="false">
           <div *ngFor="let student of course?.students">
-            <mat-expansion-panel (opened)="setAccordionStep(course?.students!.indexOf(student))" 
-                                 >
+            <mat-expansion-panel
+              (opened)="setAccordionStep(course?.students!.indexOf(student))"
+            >
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="student-header">
-                    <span class="student-name">{{student.lastName}} {{student.firstName}}</span>
-                    <button mat-icon-button [matMenuTriggerFor]="menu" 
-                            class="course-menu-button" 
-                            (click)="$event.stopPropagation()">
+                    <span class="student-name"
+                      >{{ student.lastName }} {{ student.firstName }}</span
+                    >
+                    <button
+                      mat-icon-button
+                      [matMenuTriggerFor]="menu"
+                      class="course-menu-button"
+                      (click)="$event.stopPropagation()"
+                    >
                       <mat-icon>more_vert</mat-icon>
                     </button>
                   </div>
@@ -50,15 +80,22 @@
               </mat-expansion-panel-header>
 
               <!-- Grades List -->
-              <div class="grades-list" *ngIf="studentGrades.get(student.id) as grades">
+              <div
+                class="grades-list"
+                *ngIf="studentGrades.get(student.id) as grades"
+              >
                 <h3>Grades</h3>
                 <div class="grades-container">
-                  <div class="grade-item" 
-                       *ngFor="let grade of grades" 
-                       [matMenuTriggerFor]="gradeMenu"
-                       (click)="selectGrade(grade.id)">
-                    <span class="grade-value">{{grade.value}}</span>
-                    <span class="grade-date">{{grade.dateGiven | date:'short'}}</span>
+                  <div
+                    class="grade-item"
+                    *ngFor="let grade of grades"
+                    [matMenuTriggerFor]="gradeMenu"
+                    (click)="selectGrade(grade.id)"
+                  >
+                    <span class="grade-value">{{ grade.value }}</span>
+                    <span class="grade-date">{{
+                      grade.dateGiven | date : "short"
+                    }}</span>
                   </div>
                 </div>
               </div>
@@ -78,14 +115,23 @@
               <div class="add-grade-form">
                 <mat-form-field>
                   <mat-label>New Grade (1-10)</mat-label>
-                  <input matInput type="number" [formControl]="gradeControl" min="1" max="10">
+                  <input
+                    matInput
+                    type="number"
+                    [formControl]="gradeControl"
+                    min="1"
+                    max="10"
+                  />
                   <mat-error *ngIf="gradeControl.invalid">
                     Please enter a valid grade between 1 and 10
                   </mat-error>
                 </mat-form-field>
-                <button mat-raised-button color="primary" 
-                        [disabled]="gradeControl.invalid"
-                        (click)="submitGrade(student.id)">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  [disabled]="gradeControl.invalid"
+                  (click)="submitGrade(student.id)"
+                >
                   Add Grade
                 </button>
               </div>
@@ -127,9 +173,11 @@
         </mat-card>
       </div> -->
     </div>
-    
+
     <ng-template #noStudents>
-      <p class="no-students-message">No students enrolled in this course yet.</p>
+      <p class="no-students-message">
+        No students enrolled in this course yet.
+      </p>
     </ng-template>
   </div>
 

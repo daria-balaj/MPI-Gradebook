@@ -1,7 +1,14 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { Observable, debounceTime, distinctUntilChanged, switchMap, map, startWith } from 'rxjs';
+import {
+  Observable,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  map,
+  startWith,
+} from 'rxjs';
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,10 +23,11 @@ import { Grade } from '../../models/grade';
   selector: 'app-course-page',
   standalone: false,
   templateUrl: './course-page.component.html',
-  styleUrl: './course-page.component.scss'
+  styleUrl: './course-page.component.scss',
 })
 export class CoursePageComponent implements OnInit {
-  @ViewChildren(MatExpansionPanel) expansionPanels!: QueryList<MatExpansionPanel>;
+  @ViewChildren(MatExpansionPanel)
+  expansionPanels!: QueryList<MatExpansionPanel>;
 
   course: Course | null = null;
   loading = true;
@@ -31,33 +39,35 @@ export class CoursePageComponent implements OnInit {
   gradeControl = new FormControl('', [
     Validators.required,
     Validators.min(1),
-    Validators.max(10)
+    Validators.max(10),
   ]);
   studentGrades: Map<number, Grade[]> = new Map();
-  step?: number; 
+  step?: number;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private dialog: MatDialog,
     private courseService: CourseService,
     private userService: UserService,
     private snackBar: MatSnackBar
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     const courseId = this.route.snapshot.params['id'];
     this.loadCourse(courseId);
     if (!courseId) return;
-    
+
     this.results = this.searchControl.valueChanges.pipe(
       startWith(''),
-      map(value => this._filter(value || '')),
+      map((value) => this._filter(value || ''))
     );
   }
 
   private _filter(value: string): User[] {
-    return this.userService.students.value.filter(student => student.lastName.toLowerCase().includes(value.toLowerCase()))
+    return this.userService.students.value.filter((student) =>
+      student.lastName.toLowerCase().includes(value.toLowerCase())
+    );
   }
 
   setAccordionStep(step: number): void {
@@ -77,40 +87,43 @@ export class CoursePageComponent implements OnInit {
         this.course = course;
         this.loading = false;
 
-        this.courseService.getStudentsInCourse(courseId).subscribe(
-          (students: User[]) => {
+        this.courseService
+          .getStudentsInCourse(courseId)
+          .subscribe((students: User[]) => {
             this.course!.students = students;
-            students.forEach(student => {
-              this.courseService.getGradesForStudent(student.id).subscribe(grades => {
-                this.studentGrades.set(student.id, grades);
-              });
-            }
-          )
-          }
-        );
+            students.forEach((student) => {
+              this.courseService
+                .getGradesForStudent(student.id)
+                .subscribe((grades) => {
+                  this.studentGrades.set(student.id, grades);
+                });
+            });
+          });
       },
       error: (error) => {
         console.error('Error loading course:', error);
         this.loading = false;
         this.showError('Failed to load course details');
-      }
+      },
     });
   }
 
   addStudent(student: User): void {
     if (!this.course) return;
 
-    this.courseService.addStudentToCourse(this.course.id, student.id).subscribe({
-      next: () => {
-        this.course?.students.push(student);
-        this.searchControl.setValue('');
-        this.showSuccess('Student added successfully');
-      },
-      error: (error) => {
-        console.error('Error adding student:', error);
-        this.showError('Failed to add student');
-      }
-    });
+    this.courseService
+      .addStudentToCourse(this.course.id, student.id)
+      .subscribe({
+        next: () => {
+          this.course?.students.push(student);
+          this.searchControl.setValue('');
+          this.showSuccess('Student added successfully');
+        },
+        error: (error) => {
+          console.error('Error adding student:', error);
+          this.showError('Failed to add student');
+        },
+      });
   }
 
   confirmRemoveStudent(student: User): void {
@@ -118,33 +131,38 @@ export class CoursePageComponent implements OnInit {
       width: '350px',
       data: {
         title: 'Remove student',
-        message: `Are you sure you want to remove ${student.lastName} ${student.firstName} from ${this.course!.courseName}?`
-      }
+        message: `Are you sure you want to remove ${student.lastName} ${
+          student.firstName
+        } from ${this.course!.courseName}?`,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.removeStudent(student.id);
       }
     });
   }
-    
 
   removeStudent(studentId: number): void {
     if (!this.course) return;
 
-    this.courseService.removeStudentFromCourse(this.course.id, studentId).subscribe({
-      next: () => {
-        if (this.course) {
-          this.course.students = this.course.students.filter(s => s.id !== studentId);
-        }
-        this.showSuccess('Student removed successfully');
-      },
-      error: (error) => {
-        console.error('Error removing student:', error);
-        this.showError('Failed to remove student');
-      }
-    });
+    this.courseService
+      .removeStudentFromCourse(this.course.id, studentId)
+      .subscribe({
+        next: () => {
+          if (this.course) {
+            this.course.students = this.course.students.filter(
+              (s) => s.id !== studentId
+            );
+          }
+          this.showSuccess('Student removed successfully');
+        },
+        error: (error) => {
+          console.error('Error removing student:', error);
+          this.showError('Failed to remove student');
+        },
+      });
   }
 
   // selectStudent(student: User): void {
@@ -152,7 +170,7 @@ export class CoursePageComponent implements OnInit {
 
   //   // Close other panels
   //   this.expansionPanels.forEach(panel => panel.close());
-    
+
   //   // Load grades if not already loaded
   //   if (!this.studentGrades.has(student.id)) {
   //     this.courseService.getGradesForStudent(student.id).subscribe(grades => {
@@ -166,19 +184,20 @@ export class CoursePageComponent implements OnInit {
     const grade = this.gradeControl.value;
     this.courseService.addGrade(this.course.id, id, Number(grade)).subscribe({
       next: () => {
-        this.courseService.getGradesForStudent(id).subscribe(grades => {
+        this.courseService.getGradesForStudent(id).subscribe((grades) => {
           this.studentGrades.set(id, grades);
-        }
+        });
+        this.showSuccess(
+          `Grade ${grade} added for ${this.selectedStudent?.lastName}`
         );
-        this.showSuccess(`Grade ${grade} added for ${this.selectedStudent?.lastName}`);
         this.gradeControl.reset();
         // this.selectedStudent = null;
-        console.log(this.studentGrades.get(id))
+        console.log(this.studentGrades.get(id));
       },
       error: (error) => {
         console.error('Error adding grade:', error);
         this.showError('Failed to add grade');
-      }
+      },
     });
   }
 
@@ -189,11 +208,11 @@ export class CoursePageComponent implements OnInit {
       width: '300px',
       data: {
         title: 'Delete Grade',
-        message: `Are you sure you want to delete this grade?`
-      }
+        message: `Are you sure you want to delete this grade?`,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.deleteGrade();
       }
@@ -215,21 +234,45 @@ export class CoursePageComponent implements OnInit {
       error: (error) => {
         console.error('Error deleting grade:', error);
         this.showError('Failed to delete grade');
-      }
+      },
     });
   }
 
   private showSuccess(message: string): void {
     this.snackBar.open(message, 'Close', {
       duration: 3000,
-      panelClass: ['success-snackbar']
+      panelClass: ['success-snackbar'],
     });
   }
 
   private showError(message: string): void {
     this.snackBar.open(message, 'Close', {
       duration: 5000,
-      panelClass: ['error-snackbar']
+      panelClass: ['error-snackbar'],
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0 || !this.course) {
+      this.showError('Fișier invalid sau cursul nu e încărcat.');
+      return;
+    }
+
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.courseService.uploadGradesCsv(this.course.id, formData).subscribe({
+      next: () => {
+        this.showSuccess('Notele au fost încărcate cu succes!');
+        this.loadCourse(this.course!.id);
+      },
+      error: (error) => {
+        console.error('Eroare la upload:', error);
+        this.showError('Nu am putut procesa fișierul CSV.');
+      },
     });
   }
 }
