@@ -54,6 +54,11 @@ public class GradeController {
         return ResponseEntity.ok(gradeService.getGradesByCourseId(courseId));
     }
 
+    @GetMapping("/course")
+    public ResponseEntity<List<Grade>> getGradesByStudentAndCourse(@RequestParam Long studentId, @RequestParam Long courseId) {
+        return ResponseEntity.ok(gradeService.getGradesByStudentIdAndCourseId(studentId, courseId));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Grade> updateGrade(@PathVariable Long id, @RequestParam double newValue) {
         Grade updated = gradeService.updateGrade(id, newValue);
@@ -86,5 +91,9 @@ public class GradeController {
     }
 
 
+    @GetMapping("average/{studentId}")
+    public ResponseEntity<Double> getAverageForStudent(@PathVariable Long studentId) {
+        return ResponseEntity.ok(gradeService.getAverageGradeForStudent(studentId));
+    }
 }
 

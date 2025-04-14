@@ -10,7 +10,8 @@ import { TeacherGuard } from './guards/teacher.guard';
 import { TeacherDashboardComponent } from './components/teacher/teacher-dashboard/teacher-dashboard.component';
 import { StudentGuard } from './guards/student.guard';
 import { StudentDashboardComponent } from './components/student/student-dashboard/student-dashboard.component';
-import { CoursePageComponent } from './components/course-page/course-page.component';
+import { TeacherCoursePageComponent } from './components/course-page/teacher-course-page/teacher-course-page.component';
+import { StudentCoursePageComponent } from './components/course-page/student-course-page/student-course-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -22,17 +23,18 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { 
     path: 'teacher',
-    // canActivate: [TeacherGuard],
+    canActivate: [TeacherGuard],
     children: [
       { path: 'dashboard', component: TeacherDashboardComponent },
-      { path: 'courses/:id', component: CoursePageComponent },
+      { path: 'courses/:id', component: TeacherCoursePageComponent },
     ]
   },
   {
     path: 'student',
-    // canActivate: [StudentGuard],
+    canActivate: [StudentGuard],
     children: [
-      { path: 'profile', component: StudentDashboardComponent },
+      { path: 'dashboard', component: StudentDashboardComponent },
+      { path: 'courses/:id', component: StudentCoursePageComponent },
     ]
   },
   { path: 'request-reset', component: RequestResetComponent },

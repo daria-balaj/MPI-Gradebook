@@ -59,6 +59,8 @@ public class GradeService {
         return gradeRepository.findByCourseId(courseId);
     }
 
+    public List<Grade> getGradesByStudentIdAndCourseId(Long studentId, Long courseId) { return gradeRepository.findByStudentIdAndCourseId(studentId, courseId); }
+
     public Grade updateGrade(Long id, Double newValue) {
         Grade existingGrade = getGradeById(id);
         existingGrade.setValue(newValue);
@@ -69,6 +71,10 @@ public class GradeService {
 
     public Double getAverageGradeForStudentAndCourse(Long studentId, Long courseId) {
         return gradeRepository.findAverageGradeByStudentAndCourse(studentId, courseId).orElse(0.0);
+    }
+
+    public Double getAverageGradeForStudent(Long studentId) {
+        return gradeRepository.findAverageGradeByStudent(studentId).orElse(0.0);
     }
 
     public List<GradeAverageDTO> getAllCourseAveragesForStudent(Long studentId) {

@@ -63,13 +63,11 @@
         </mat-card-header>
 
         <mat-card-content>
-          <p class="description">
-            {{ course.description || "No description provided." }}
-          </p>
-          <div class="course-stats">
-            <mat-icon>people</mat-icon>
-            <span>{{ course.students.length || "No" }} Students</span>
-          </div>
+            <p class="description">{{ course.description || 'No description provided.' }}</p>
+            <div class="course-stats">
+                <mat-icon>people</mat-icon>
+                <span>{{ course.studentCount || 'No' }} Students</span>
+            </div>
         </mat-card-content>
       </mat-card>
     </div>

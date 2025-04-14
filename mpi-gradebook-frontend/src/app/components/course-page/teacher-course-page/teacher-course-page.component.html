@@ -86,32 +86,23 @@
               >
                 <h3>Grades</h3>
                 <div class="grades-container">
-                  <div
-                    class="grade-item"
-                    *ngFor="let grade of grades"
-                    [matMenuTriggerFor]="gradeMenu"
-                    (click)="selectGrade(grade.id)"
-                  >
-                    <span class="grade-value">{{ grade.value }}</span>
-                    <span class="grade-date">{{
-                      grade.dateGiven | date : "short"
-                    }}</span>
+                  <div class="grade-item" 
+                       *ngFor="let grade of grades" 
+                       [matMenuTriggerFor]="gradeMenu"
+                       (click)="selectGrade(grade.id)">
+                    <span class="grade-value">{{grade.value}}</span>
+                    <span class="grade-date">{{grade.dateGiven | date:'longDate'}}</span>
                   </div>
                 </div>
               </div>
 
               <mat-menu #gradeMenu="matMenu">
-                <!-- <button mat-menu-item (click)="editGrade()">
-                  <mat-icon>edit</mat-icon>
-                  <span>Edit Grade</span>
-                </button> -->
                 <button mat-menu-item (click)="confirmDeleteGrade()">
                   <mat-icon>delete</mat-icon>
                   <span>Delete Grade</span>
                 </button>
               </mat-menu>
 
-              <!-- Add Grade Form -->
               <div class="add-grade-form">
                 <mat-form-field>
                   <mat-label>New Grade (1-10)</mat-label>
@@ -146,32 +137,6 @@
           </div>
         </mat-accordion>
       </div>
-
-      <!-- Add grading section
-      <div class="grading-section" *ngIf="selectedStudent">
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>Add Grade for {{selectedStudent.lastName}} {{selectedStudent.firstName}}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-form-field>
-              <mat-label>Grade (1-10)</mat-label>
-              <input matInput type="number" [formControl]="gradeControl" min="1" max="10">
-              <mat-error *ngIf="gradeControl.invalid">
-                Please enter a valid grade between 1 and 10
-              </mat-error>
-            </mat-form-field>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button (click)="selectedStudent = null">Cancel</button>
-            <button mat-raised-button color="primary" 
-                    [disabled]="gradeControl.invalid"
-                    (click)="submitGrade()">
-              Submit Grade
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      </div> -->
     </div>
 
     <ng-template #noStudents>

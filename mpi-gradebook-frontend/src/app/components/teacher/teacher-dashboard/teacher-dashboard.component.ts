@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CourseFormComponent } from '../../course-form/course-form.component';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../../services/auth.service';
+import { catchError, filter, Observable, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-teacher-dashboard',
@@ -17,31 +19,59 @@ export class TeacherDashboardComponent implements OnInit {
   courses: Course[] = [];
   error: boolean = false;
   loading: boolean = true;
-  teacherId: number = 1;
+  teacherId?: number;
   constructor(
     private courseService: CourseService,
     private dialog: MatDialog,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadTeacherCourses();
+    // this.loadTeacherCourses();
+    this.authService.getCurrentUser().pipe(
+          filter(user => !!user), // Only proceed if user exists
+          switchMap(user => {
+            this.teacherId = user!.id;
+            return this.loadTeacherCourses();
+          })
+        ).subscribe({
+          next: (courses) => {
+            this.courses = courses;
+            this.courses.forEach(course => {
+              this.courseService.getStudentCountForCourse(course.id).subscribe({
+                next: (count) => {
+                  course.studentCount = count;
+                },
+                error: (error) => {
+                  console.error('Error loading student count:', error);
+                }
+              });
+            })
+          },
+          error: (error) => {
+            console.error('Error loading dashboard:', error);
+            this.error = true;
+            this.loading = false;
+          }
+        });
   }
 
-  loadTeacherCourses(): void {
-    this.courseService.getCoursesForTeacher(1).subscribe({
-      next: (courses) => {
-        this.courses = courses;
-        console.log(this.courses[1].students);
+  loadTeacherCourses(): Observable<Course[]> {
+    return this.courseService.getCoursesForTeacher(this.teacherId!).pipe(
+      filter(courses => !!courses), // Ensure courses are not null or undefined
+      switchMap(courses => {
         this.loading = false;
-      },
-      error: (error) => {
+        return [courses];
+      }),
+      catchError(error => {
         console.error('Error loading courses:', error);
         this.error = true;
         this.loading = false;
-      },
-    });
+        return [];
+      })
+    );
   }
 
   navigateToCourse(courseId: number): void {

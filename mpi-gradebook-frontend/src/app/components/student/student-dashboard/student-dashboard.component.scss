@@ -1,0 +1,85 @@
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 4px solid rgba(157, 78, 221, 0.1);
+      border-left-color: #ca4edd;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  
+    p {
+      margin-top: 1rem;
+    //   color: #9d4edd;
+    }
+}
+
+mat-spinner {
+    height: 40px !important;
+    color: #9d4edd;
+    margin: 30px 50px;
+}
+
+.average-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 120px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+
+    span {
+        font-size: 1.2rem;
+        color: #e9dcf7;
+        margin: 10px;
+    }
+  }
+
+  .course-card {
+    width: 90%;
+    max-width: 300px;
+    margin: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.6rem;
+    justify-content: space-around;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(157, 78, 221, 0.2);
+
+    &:hover {
+        box-shadow: 0 6px 20px rgba(157, 78, 221, 0.2);
+    }
+  }
+
+mat-icon {
+    font-size: 3rem !important;
+    background: linear-gradient(to right, #d4b0fa, #eadafb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.stats-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #e9dcf7;
+    margin-bottom: 5px;
+}
+
+.dashboard {
+    width: 90%;
+    height: 100vh;
+    // margin: 30px !important;
+    padding: 40px !important;
+}

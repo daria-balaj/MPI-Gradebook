@@ -1,33 +1,25 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import {
-  Observable,
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  map,
-  startWith,
-} from 'rxjs';
-import { CourseService } from '../../services/course.service';
-import { UserService } from '../../services/user.service';
+import { Observable, map, startWith } from 'rxjs';
+import { CourseService } from '../../../services/course.service';
+import { UserService } from '../../../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Course } from '../../models/course';
-import { User } from '../../models/user';
+import { Course } from '../../../models/course';
+import { User } from '../../../models/user';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { MatExpansionPanel } from '@angular/material/expansion';
-import { Grade } from '../../models/grade';
+import { Grade } from '../../../models/grade';
 
 @Component({
-  selector: 'app-course-page',
+  selector: 'app-teacher-course-page',
   standalone: false,
-  templateUrl: './course-page.component.html',
-  styleUrl: './course-page.component.scss',
+  templateUrl: './teacher-course-page.component.html',
+  styleUrl: './teacher-course-page.component.scss'
 })
-export class CoursePageComponent implements OnInit {
-  @ViewChildren(MatExpansionPanel)
-  expansionPanels!: QueryList<MatExpansionPanel>;
+export class TeacherCoursePageComponent implements OnInit {
+  @ViewChildren(MatExpansionPanel) expansionPanels!: QueryList<MatExpansionPanel>;
 
   course: Course | null = null;
   loading = true;
@@ -91,14 +83,14 @@ export class CoursePageComponent implements OnInit {
           .getStudentsInCourse(courseId)
           .subscribe((students: User[]) => {
             this.course!.students = students;
-            students.forEach((student) => {
-              this.courseService
-                .getGradesForStudent(student.id)
-                .subscribe((grades) => {
-                  this.studentGrades.set(student.id, grades);
-                });
-            });
-          });
+            students.forEach(student => {
+              this.courseService.getGradesForStudentAndCourse(student.id, courseId).subscribe(grades => {
+                this.studentGrades.set(student.id, grades);
+              });
+            }
+          )
+          }
+        );
       },
       error: (error) => {
         console.error('Error loading course:', error);
@@ -165,26 +157,12 @@ export class CoursePageComponent implements OnInit {
       });
   }
 
-  // selectStudent(student: User): void {
-  //   this.selectedStudent = student;
-
-  //   // Close other panels
-  //   this.expansionPanels.forEach(panel => panel.close());
-
-  //   // Load grades if not already loaded
-  //   if (!this.studentGrades.has(student.id)) {
-  //     this.courseService.getGradesForStudent(student.id).subscribe(grades => {
-  //       this.studentGrades.set(student.id, grades);
-  //     });
-  //   }
-  // }
-
   submitGrade(id: number): void {
     if (!this.course || !this.gradeControl.valid) return;
     const grade = this.gradeControl.value;
     this.courseService.addGrade(this.course.id, id, Number(grade)).subscribe({
       next: () => {
-        this.courseService.getGradesForStudent(id).subscribe((grades) => {
+        this.courseService.getGradesForStudentAndCourse(id, this.course!.id).subscribe(grades => {
           this.studentGrades.set(id, grades);
         });
         this.showSuccess(

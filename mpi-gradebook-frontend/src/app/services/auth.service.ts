@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { environment } from '../environments/environment';
 import { User } from '..//types/user.types';
 
@@ -14,7 +14,7 @@ export class AuthService {
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
 
-  public currentUserSubject = new BehaviorSubject<any>(null);
+  public currentUserSubject = new BehaviorSubject<User | null>(null);
 
   signup(userData: Partial<User>): Observable<any> {
     console.log(userData);
@@ -33,7 +33,7 @@ export class AuthService {
         tap((token: string) => {
           localStorage.setItem('token', token);
           localStorage.setItem('username', username);
-          // this.getCurrentUser().subscribe();
+          this.getCurrentUser();
         })
       );
   }
@@ -65,19 +65,7 @@ export class AuthService {
     this.isLoggedInSubject.next(loggedIn);
   }
 
-  // getUserDetails(userId: string) {
-  //   const userDetailsEndpoint = `${this.baseUrl}/api/users/${userId}`;
-  //   this.http.get<User>(userDetailsEndpoint).subscribe({
-  //     next: (user) => {
-  //       this.currentUserSubject.next(user);
-  //     },
-  //     error: (error) => {
-  //       console.error('Error fetching user details:', error);
-  //     },
-  //   });
-  // }
-
-  getCurrentUser(): Observable<User> {
+  setCurrentUser(): Observable<User> {
     const username = this.getUsername();
 
     if (!username) {
@@ -85,17 +73,49 @@ export class AuthService {
     }
     return this.http.get<User>(
       `${this.baseUrl}/api/users/username/${username}`
-    ).pipe(
-      tap((user) => this.currentUserSubject.next(user)
-    ));
+    );
+  }
+
+  getCurrentUser(): Observable<User | null> {
+    if (this.currentUserSubject.value) {
+      return this.currentUserSubject.asObservable();
+    }
+    
+    return this.setCurrentUser().pipe(
+      tap((user: User) => {
+        this.currentUserSubject.next(user);
+      }),
+      catchError(error => {
+        console.error('Error fetching current user:', error);
+        return of(null);
+      })
+    );
   }
 
   isTeacher(): boolean {
-    return this.currentUserSubject.value?.role === 'TEACHER';
+    const currentUser = this.currentUserSubject.value;
+    if (!currentUser) {
+      const username = this.getUsername();
+      if (!username) return false;
+      
+      this.getCurrentUser().subscribe();
+      return false;
+    }
+    return currentUser.role === 'TEACHER';
   }
   
   isStudent(): boolean {
-    return this.currentUserSubject.value?.role === 'STUDENT';
+    const currentUser = this.currentUserSubject.value;
+    if (!currentUser) {
+      // If no user is set, try to get it synchronously from localStorage
+      const username = this.getUsername();
+      if (!username) return false;
+      
+      // Trigger async user fetch for future calls
+      this.getCurrentUser().subscribe();
+      return false;
+    }
+    return currentUser.role === 'STUDENT';
   }
 
   checkUsername(username: string): Observable<boolean> {
