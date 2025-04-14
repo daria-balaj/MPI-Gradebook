@@ -26,20 +26,12 @@ export class AppComponent {
       this.isLoggedIn = loggedIn;
     });
   }
-  navigateToProfile(): void {
-    if (this.isLoggedIn) {
-      this.router.navigate(['/profile']).catch((err) => {
-        console.error('Failed to navigate to profile page:', err);
-      });
-    } else {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '300px',
-        data: {
-          title: 'Login Required',
-          message: 'You need to log in to access your profile.',
-          singleButton: true,
-        },
-      });
+  navigateToDashboard(): void {
+    if (this.authService.isTeacher()) {
+      this.router.navigate(['/teacher/dashboard']);
+    }
+    else if (this.authService.isStudent()) {
+      this.router.navigate(['/student/dashboard']);
     }
   }
 

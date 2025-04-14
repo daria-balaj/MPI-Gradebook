@@ -6,5 +6,5 @@ export interface Course {
     courseName: string,
     description: string,
     students: User[],
-    assignments: Assignment[];
+    studentCount: number
 }

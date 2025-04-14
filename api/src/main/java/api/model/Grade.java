@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -33,5 +34,5 @@ public class Grade {
     private Course course;
 
     @Column(nullable = false)
-    private LocalDate dateGiven;
+    private LocalDateTime dateGiven;
 }

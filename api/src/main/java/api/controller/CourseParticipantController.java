@@ -75,9 +75,9 @@ public class CourseParticipantController {
 
 
     @GetMapping("/course/{courseId}/count")
-    public ResponseEntity<Map<String, Long>> getParticipantCount(@PathVariable Long courseId) {
+    public ResponseEntity<Long> getParticipantCount(@PathVariable Long courseId) {
         long count = courseParticipantService.getEnrollmentCountForCourse(courseId);
-        return ResponseEntity.ok(Map.of("enrollmentCount", count));
+        return ResponseEntity.ok(count);
     }
 
     

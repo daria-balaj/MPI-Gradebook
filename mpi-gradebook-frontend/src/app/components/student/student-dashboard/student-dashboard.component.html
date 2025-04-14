@@ -1,25 +1,64 @@
+<div class="dashboard">
 <mat-tab-group>
-    <mat-tab label="Courses" class="tab-content"></mat-tab>
+    <mat-tab label="Courses" class="tab-content">
+      <div *ngIf="loading" class="loader-container">
+          <div class="loading-spinner">
+            <!-- <div class="spinner"></div> -->
+            <p>Loading courses...</p>
+            <mat-spinner color="accent"></mat-spinner>
+          </div>
+      </div>
+  
+      <div *ngIf="error" class="error-container">
+        <mat-icon color="warn">error</mat-icon>
+        <p>Failed to load courses. Please try again later.</p>
+        <button mat-raised-button color="primary" (click)="loadCourses()">Retry</button>
+      </div>
+  
+      <div *ngIf="!loading && !error && this.courses.length == 0" class="empty-state">
+        <h2>No Courses Yet</h2>
+        <p>You're not enrolled in any courses at the moment.</p>
+      </div>
+  
+      <div *ngIf="!loading && !error && this.courses" class="courses-grid">
+        <mat-card *ngFor="let course of courses" class="course-card"
+        (click)="navigateToCourse(course.id)">
+          <mat-card-header>
+            <mat-card-title>{{ course.courseName }}</mat-card-title>
+          </mat-card-header>
+  
+          <mat-card-content>
+              <p class="description">{{ course.description || 'No description provided.' }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
     <mat-tab label="Grades" class="tab-content">
+      <div *ngIf="this.grades && this.grades.length > 0" class="average-card">
+        <span>Average</span>
+        <div class="stats-value">{{this.average?.toFixed(2)}}</div>
+      </div>
         <h2>My grades</h2>
-        <table mat-table [dataSource]="this.grades">
-            <ng-container matColumnDef="course">
-                <th mat-header-cell *matHeaderCellDef> Course</th>
-                <td mat-cell *matCellDef="let grade"> {{grade.courseName}} </td>
-              </ng-container>
-            
-              <ng-container matColumnDef="grade">
-                <th mat-header-cell *matHeaderCellDef> Name </th>
-                <td mat-cell *matCellDef="let grade"> {{grade.value}} </td>
-              </ng-container>
-            
-              <ng-container matColumnDef="dateUpdated">
-                <th mat-header-cell *matHeaderCellDef> Weight </th>
-                <td mat-cell *matCellDef="let grade"> {{grade.updatedAt}} </td>
-              </ng-container>
-            
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <p *ngIf="this.grades.length === 0">No grades at the moment.</p>
+        <table mat-table [dataSource]="this.grades" *ngIf="this.grades.length > 0">
+          <ng-container matColumnDef="courseName">
+              <th mat-header-cell *matHeaderCellDef> Course</th>
+              <td mat-cell *matCellDef="let grade"> {{grade.course.courseName}} </td>
+          </ng-container>
+          
+          <ng-container matColumnDef="grade">
+            <th mat-header-cell *matHeaderCellDef> Grade </th>
+            <td mat-cell *matCellDef="let grade"> {{grade.value}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="updatedAt">
+            <th mat-header-cell *matHeaderCellDef> Date </th>
+            <td mat-cell *matCellDef="let grade"> {{grade.dateGiven | date : 'longDate'}} </td>
+          </ng-container>
+        
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
     </mat-tab>
 </mat-tab-group>
+</div>

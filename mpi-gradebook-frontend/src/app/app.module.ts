@@ -29,13 +29,14 @@ import { HomeComponent } from './components/home/home.component';
 import { TeacherDashboardComponent } from './components/teacher/teacher-dashboard/teacher-dashboard.component';
 import { StudentDashboardComponent } from './components/student/student-dashboard/student-dashboard.component';
 import { CourseFormComponent } from './components/course-form/course-form.component';
-import { CoursePageComponent } from './components/course-page/course-page.component';
+import { TeacherCoursePageComponent } from './components/course-page/teacher-course-page/teacher-course-page.component';
 import { RequestResetComponent } from './components/request-reset/request-reset.component';
 import { VerifyResetComponent } from './components/verify-reset/verify-reset.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { RouterModule } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
+import { StudentCoursePageComponent } from './components/course-page/student-course-page/student-course-page.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     TeacherDashboardComponent,
     StudentDashboardComponent,
     CourseFormComponent,
-    CoursePageComponent,
+    TeacherCoursePageComponent,
+    StudentCoursePageComponent
   ],
   imports: [
     BrowserModule,

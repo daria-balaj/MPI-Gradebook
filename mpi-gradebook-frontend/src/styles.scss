@@ -6,6 +6,16 @@
   @include mat.expansion-overrides((
     header-collapsed-state-height: 60px
   ));
+
+  @include mat.table-overrides((
+    background-color: #2a182d,
+    header-headline-size: 18px,
+    row-item-label-text-size: 16px,
+  ));
+
+  @include mat.tabs-overrides((
+    label-text-size: 20px
+  ));
 }
 
 body {

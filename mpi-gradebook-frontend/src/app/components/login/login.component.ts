@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../types/user.types';
 import { UserValidatorService } from '../../services/user-validators.service';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -93,9 +93,8 @@ export class LoginComponent implements OnInit {
           panelClass: ['snackbar-success'],
         });
         this.signupForm.reset();
-        this.authService.getCurrentUser().subscribe(
-          () => this.redirectAfterAuthentication()
-        );
+        this.authService.getCurrentUser().pipe(filter(user => !!user)).subscribe(() => this.redirectAfterAuthentication());
+        
       },
       error: (error) => {
         console.error('Signup failed', error);
@@ -114,6 +113,7 @@ export class LoginComponent implements OnInit {
   }
 
   redirectAfterAuthentication(): void {
+    console.log('Redirecting after authentication...', this.authService.currentUserSubject.value);
     if (this.authService.isTeacher()) {
       this.router.navigate(['/teacher/dashboard']);
     }
@@ -166,9 +166,8 @@ export class LoginComponent implements OnInit {
           duration: 3000,
           panelClass: ['snackbar-success'],
         });
-        this.authService.getCurrentUser().subscribe(
-          () => this.redirectAfterAuthentication()
-        )
+
+        this.authService.getCurrentUser().pipe(filter(user => !!user)).subscribe(() => this.redirectAfterAuthentication());
       },
       error: (error) => {
         console.error('Login failed', error);
